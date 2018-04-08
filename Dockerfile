@@ -39,6 +39,10 @@ RUN yarn global add gulp-cli
 RUN curl https://sh.rustup.rs | sh -s -- -y
 RUN /root/.cargo/bin/cargo install svgcleaner
 
+# Create the MongoDB database directory.
+RUN mkdir /data
+RUN mkdir /data/db
+
 EXPOSE 80
 
 CMD ["./run.sh"]

@@ -1,6 +1,12 @@
 #!/bin/sh
 cd /home/lichess/projects/lila
 
+# Run nginx.
+nginx
+
+# Run MongoDB in the background.
+mongod --fork --logpath /var/log/mongod.log
+
 # Use the default dev console script.
 cp bin/dev.default bin/dev && chmod +x bin/dev
 
