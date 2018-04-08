@@ -1,10 +1,10 @@
-# lichocker - [lichess.org](https://lichess.org) run in a [https://www.docker.com/](Docker) container
+# lichocker - [lichess.org](https://lichess.org) run in a [Docker](https://www.docker.com/) container
 
 ## Getting Started
 
-* [https://git-scm.com/downloads](Install Git).
-* [https://docs.docker.com/install/](Install Docker).
-* Check out [https://github.com/ornicar/lila](lila), the main project behind Lichess:
+* [Install Git](https://git-scm.com/downloads).
+* [Install Docker](https://docs.docker.com/install/]).
+* Check out [lila](https://github.com/ornicar/lila), the main project behind Lichess:
 
 `git clone --recursive https://github.com/ornicar/lila.git`
 
@@ -23,7 +23,7 @@ docker run \
     lichess
 ```
 
-* Type `run` when you see the [https://www.scala-sbt.org/](Scala Build Tool) console appear: `[lila] $`.
+* Type `run` when you see the [Scala Build Tool](https://www.scala-sbt.org/) console appear: `[lila] $`.
 
 * Wait until you see the following message:
 
