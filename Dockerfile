@@ -2,9 +2,6 @@ FROM ubuntu:16.04
 
 WORKDIR /home/lichess
 
-ADD run.sh /home/lichess/run.sh
-ADD nginx.conf /usr/local/etc/nginx/nginx.conf
-
 RUN apt-get update
 RUN apt-get install -y apt-transport-https
 
@@ -39,9 +36,15 @@ RUN yarn global add gulp-cli
 RUN curl https://sh.rustup.rs | sh -s -- -y
 RUN /root/.cargo/bin/cargo install svgcleaner
 
+# Link the svgcleaner executable to a folder in the system's path.
+RUN ln -s /root/.cargo/bin/svgcleaner /usr/bin/svgcleaner
+
 # Create the MongoDB database directory.
 RUN mkdir /data
 RUN mkdir /data/db
+
+ADD run.sh /home/lichess/run.sh
+ADD nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 80
 
