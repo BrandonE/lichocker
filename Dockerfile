@@ -43,8 +43,11 @@ RUN ln -s /root/.cargo/bin/svgcleaner /usr/bin/svgcleaner
 RUN mkdir /data
 RUN mkdir /data/db
 
+RUN sbt update
+
 ADD run.sh /home/lichess/run.sh
 ADD nginx.conf /etc/nginx/nginx.conf
+ADD global.sbt /root/.sbt/1.0/global.sbt
 
 EXPOSE 80
 

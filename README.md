@@ -24,8 +24,9 @@ docker build -t lichess .
 
 ```
 docker run \
-    -v ~/YOUR/PATH/TO/lila:/root/projects/lila \
-    -p 80:80 \
+    --volume ~/YOUR/PATH/TO/lila:/home/lichess/projects/lila \
+    --publish 80:80 \
+    --name lichess \
     lichess
 ```
 
