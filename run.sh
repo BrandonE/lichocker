@@ -27,4 +27,4 @@ yarn install && ./bin/svg-optimize
 ./bin/dev compile
 
 # Run the Scala application
-./bin/dev
+./bin/dev run

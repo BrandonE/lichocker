@@ -4,6 +4,7 @@
 
 * [Install Git](https://git-scm.com/downloads).
 * [Install Docker](https://docs.docker.com/install/]).
+* Recommended: Increase your Docker runtime memory to 4GB and your CPUs to 4 ([Mac](https://docs.docker.com/docker-for-mac/#advanced), [Windows](https://docs.docker.com/docker-for-windows/#advanced), and configure the docker-machine assigned memory and CPUs for VirtualBox).
 * Check out [lila](https://github.com/ornicar/lila), the main project behind Lichess:
 
 `git clone --recursive https://github.com/ornicar/lila.git`
@@ -15,7 +16,7 @@
 
 ```
 cd /YOUR/PATH/TO/lichocker
-docker build -t lichess .
+docker build --tag lichess .
 ```
 
 ## Running
@@ -31,8 +32,6 @@ docker run \
 ```
 
 You can change the first `80` to some other other port number to bind the HTTP server to that port on the host machine.
-
-* Type `run` when you see the [Scala Build Tool](https://www.scala-sbt.org/) console appear: `[lila] $`.
 
 * Wait until you see the following message:
 
@@ -51,3 +50,10 @@ You can change the first `80` to some other other port number to bind the HTTP s
 Because your lila directory exists on your host machine and is mounted onto the container, you can modify the code and rebuild on the host machine and it will take effect on the container. Run `~/YOUR/PATH/TO/lila/ui/build` to update the client side modules. Auto-reloading is enabled for the server side Scala code via sbt.
 
 For more information, including the guide used to create lichocker, please see the [Lichess Development Onboarding](https://github.com/ornicar/lila/wiki/Lichess-Development-Onboarding) instructions.
+
+## Other Commands
+
+* Exiting the Docker container: Ctrl+C
+* Stopping the Docker container: `docker stop lichess`
+* Restarting the Docker container: `docker start lichess --attach`
+* View the output of the running Docker container that you previously exited: `docker attach lichess`

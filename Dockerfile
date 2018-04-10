@@ -15,7 +15,10 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B
 
 RUN apt-get update
 
-RUN apt-get install -y curl default-jdk git-all mongodb-org nginx npm parallel sbt wget
+RUN apt-get install -y curl default-jdk git-all locales mongodb-org nginx npm parallel sbt wget
+
+# Set locale.
+RUN locale-gen en_US.UTF-8
 
 # Silence the parallel citation warning.
 RUN mkdir -p /root/.parallel
@@ -48,6 +51,10 @@ RUN sbt update
 ADD run.sh /home/lichess/run.sh
 ADD nginx.conf /etc/nginx/nginx.conf
 ADD global.sbt /root/.sbt/1.0/global.sbt
+
+# Use UTF-8 encoding.
+ENV LANG "en_US.UTF-8"
+ENV LC_CTYPE "en_US.UTF-8"
 
 EXPOSE 80
 
