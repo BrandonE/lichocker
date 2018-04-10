@@ -28,17 +28,21 @@ docker run \
     --volume ~/YOUR/PATH/TO/lila:/home/lichess/projects/lila \
     --publish 80:80 \
     --name lichess \
+    --interactive \
+    --tty \
     lichess
 ```
 
 You can change the first `80` to some other other port number to bind the HTTP server to that port on the host machine.
+
+* Type `run` when you see the [Scala Build Tool](https://www.scala-sbt.org/) console appear: `[lila] $`.
 
 * Wait until you see the following message:
 
 ```
 --- (Running the application, auto-reloading is enabled) ---
 
-[info] p.c.s.NettyServer - Listening for HTTP on /0:0:0:0:0:0:0:0:9663
+[info] p.c.s.NettyServer - Listening for HTTP on /0.0.0.0:9663
 
 (Server started, use Ctrl+D to stop and go back to the console...)
 ```
