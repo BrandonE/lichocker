@@ -2,51 +2,58 @@ FROM ubuntu:16.04
 
 WORKDIR /home/lichess
 
-RUN apt-get update
-RUN apt-get install -y apt-transport-https
-
-# Add the MongoDB source.
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
-RUN echo "deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-3.2.list
-
-# Add the Scala Build Tool source.
-RUN echo "deb https://dl.bintray.com/sbt/debian /" | tee -a /etc/apt/sources.list.d/sbt.list
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823
-
-RUN apt-get update
-
-RUN apt-get install -y curl default-jdk git-all locales mongodb-org nginx npm parallel sbt wget
-
-# Set locale.
-RUN locale-gen en_US.UTF-8
-
-# Silence the parallel citation warning.
-RUN mkdir -p /root/.parallel
-RUN touch /root/.parallel/will-cite
-
-# Update node.
-RUN npm install -g n
-RUN n stable
-
-# Link the nodejs executable so it can be used about Yarn.
-RUN ln -s /usr/bin/nodejs /usr/bin/node
-
-RUN npm install -g yarn
-
-RUN yarn global add gulp-cli
-
-# Install svgcleaner via the Rust package manager, Cargo.
-RUN curl https://sh.rustup.rs | sh -s -- -y
-RUN /root/.cargo/bin/cargo install svgcleaner
-
-# Link the svgcleaner executable to a folder in the system's path.
-RUN ln -s /root/.cargo/bin/svgcleaner /usr/bin/svgcleaner
-
-# Create the MongoDB database directory.
-RUN mkdir /data
-RUN mkdir /data/db
-
-RUN sbt update
+RUN apt-get update \
+    && apt-get install -y apt-transport-https \
+    # Add the MongoDB source.
+    && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927 \
+    && echo "deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" \
+        | tee /etc/apt/sources.list.d/mongodb-org-3.2.list \
+    # Add the Scala Build Tool source.
+    && echo "deb https://dl.bintray.com/sbt/debian /" \
+        | tee -a /etc/apt/sources.list.d/sbt.list \
+    && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823 \
+    && apt-get update \
+    && apt-get install -y \
+        curl \
+        default-jdk \
+        git-all \
+        locales \
+        mongodb-org \
+        nginx \
+        npm \
+        parallel \
+        sbt \
+        wget \
+    # Set locale.
+    && locale-gen en_US.UTF-8 \
+    # Silence the parallel citation warning.
+    && mkdir -p /root/.parallel \
+    && touch /root/.parallel/will-cite \
+    # Update node.
+    && npm install -g n \
+    && n stable \
+    # Link the nodejs executable so it can be used about Yarn.
+    && ln -s /usr/bin/nodejs /usr/bin/node \
+    && npm install -g yarn \
+    && yarn global add gulp-cli \
+    # Install svgcleaner via the Rust package manager, Cargo.
+    && curl https://sh.rustup.rs \
+        | sh -s -- -y \
+    && /root/.cargo/bin/cargo install svgcleaner \
+    # Move the svgcleaner executable to a folder in the system's path.
+    && mv /root/.cargo/bin/svgcleaner /usr/bin/svgcleaner \
+    # Create the MongoDB database directory.
+    && mkdir /data \
+    && mkdir /data/db \
+    && sbt update \
+    # Remove now unneeded dependencies.
+    && apt-get purge -y \
+        curl \
+        git-all \
+        npm \
+    && apt-get autoremove -y \
+    && apt-get clean \
+    && /root/.cargo/bin/rustup self uninstall -y
 
 ADD run.sh /home/lichess/run.sh
 ADD nginx.conf /etc/nginx/nginx.conf

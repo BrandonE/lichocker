@@ -4,12 +4,12 @@
 
 * [Install Git](https://git-scm.com/downloads).
 * [Install Docker](https://docs.docker.com/install/]).
-* Recommended: Increase your Docker runtime memory to 4GB and your CPUs to 4 ([Mac](https://docs.docker.com/docker-for-mac/#advanced), [Windows](https://docs.docker.com/docker-for-windows/#advanced), and configure the docker-machine assigned memory and CPUs for VirtualBox).
+* Recommended: Increase your Docker runtime memory to 4GB and your CPUs to 4 ([Mac](https://docs.docker.com/docker-for-mac/#advanced), [Windows](https://docs.docker.com/docker-for-windows/#advanced), and configure the `docker-machine` assigned memory and CPUs for VirtualBox).
 * Check out [lila](https://github.com/ornicar/lila), the main project behind Lichess:
 
 `git clone --recursive https://github.com/ornicar/lila.git`
 
-* Add the following line to your `/etc/hosts` file: `127.0.0.1 l.org socket.l.org en.l.org`.
+* Add the following line to your `/etc/hosts` file: `127.0.0.1 l.org socket.l.org en.l.org`
 
 ## Obtaining the Docker image
 * Change directories to the lichocker repository and build the Docker image:
@@ -35,7 +35,7 @@ docker run \
 
 You can change the first `80` to some other other port number to bind the HTTP server to that port on the host machine.
 
-* Type `run` when you see the [Scala Build Tool](https://www.scala-sbt.org/) console appear: `[lila] $`.
+* Type `run` when you see the [Scala Build Tool](https://www.scala-sbt.org/) console appear: `[lila] $`
 
 * Wait until you see the following message:
 
