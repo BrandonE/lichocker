@@ -57,7 +57,6 @@ RUN apt-get update \
 
 ADD run.sh /home/lichess/run.sh
 ADD nginx.conf /etc/nginx/nginx.conf
-ADD global.sbt /root/.sbt/1.0/global.sbt
 
 # Use UTF-8 encoding.
 ENV LANG "en_US.UTF-8"

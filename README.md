@@ -49,6 +49,10 @@ You can change the first `80` to some other other port number to bind the HTTP s
 
 * Navigate to http://l.org in your host machine's browser.
 
+### Optional: Setup fishnet for server side analysis and play
+
+You can run fishnet (in another Docker container if desired) by following [https://github.com/niklasf/fishnet](these instructions).
+
 ## Rebuilding Lichess
 
 Because your lila directory exists on your host machine and is mounted onto the container, you can modify the code and rebuild on the host machine and it will take effect on the container. Run `~/YOUR/PATH/TO/lila/ui/build` to update the client side modules. Auto-reloading is enabled for the server side Scala code via sbt.
@@ -59,5 +63,5 @@ For more information, including the guide used to create lichocker, please see t
 
 * Exiting the Docker container: Ctrl+C
 * Stopping the Docker container: `docker stop lichess`
-* Restarting the Docker container: `docker start lichess --attach`
+* Restarting the Docker container: `docker start lichess --attach --interactive`
 * View the output of the running Docker container that you previously exited: `docker attach lichess`
