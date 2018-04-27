@@ -1,8 +1,8 @@
 FROM ubuntu:16.04
 
-WORKDIR /home/lichess
-
-RUN apt-get update \
+RUN useradd -ms /bin/bash lichess \
+    && echo "lichess ALL = NOPASSWD : ALL" >> /etc/sudoers \
+    && apt-get update \
     && apt-get install -y apt-transport-https \
     # Add the MongoDB source.
     && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927 \
@@ -23,6 +23,7 @@ RUN apt-get update \
         npm \
         parallel \
         sbt \
+        sudo \
         wget \
     # Set locale.
     && locale-gen en_US.UTF-8 \
@@ -62,6 +63,11 @@ ADD nginx.conf /etc/nginx/nginx.conf
 ENV LANG "en_US.UTF-8"
 ENV LC_CTYPE "en_US.UTF-8"
 
+# Run as a non-privileged user.
+USER lichess
+
 EXPOSE 80
 
-CMD ["./run.sh"]
+WORKDIR /home/lichess
+
+ENTRYPOINT ./run.sh

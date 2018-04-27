@@ -5,10 +5,9 @@
 * [Install Git](https://git-scm.com/downloads).
 * [Install Docker](https://docs.docker.com/install/]).
 * Recommended: Increase your Docker runtime memory to 4GB and your CPUs to 4 ([Mac](https://docs.docker.com/docker-for-mac/#advanced), [Windows](https://docs.docker.com/docker-for-windows/#advanced), and configure the `docker-machine` assigned memory and CPUs for VirtualBox).
-* Check out [lila](https://github.com/ornicar/lila), the main project behind Lichess:
-
-`git clone --recursive https://github.com/ornicar/lila.git`
-
+* Check out [lila](https://github.com/ornicar/lila), the main project behind Lichess: `git clone --recursive https://github.com/ornicar/lila.git`
+* Use the default dev console script: `cp bin/dev.default bin/dev && chmod +x bin/dev`
+* Use the default application configuration: `cp conf/application.conf.default conf/application.conf`
 * Add the following line to your `/etc/hosts` file: `127.0.0.1 l.org socket.l.org en.l.org`
 
 ## Obtaining the Docker image
@@ -33,7 +32,7 @@ docker run \
     lichess
 ```
 
-You can change the first `80` to some other other port number to bind the HTTP server to that port on the host machine.
+You can change the first `80` to some other other port number to bind the HTTP server to that port on the host machine. You will also have to change `net.asset.domain` in your lila config.
 
 * Type `run` when you see the [Scala Build Tool](https://www.scala-sbt.org/) console appear: `[lila] $`
 
@@ -65,3 +64,4 @@ For more information, including the guide used to create lichocker, please see t
 * Stopping the Docker container: `docker stop lichess`
 * Restarting the Docker container: `docker start lichess --attach --interactive`
 * View the output of the running Docker container that you previously exited: `docker attach lichess`
+* Remove the Docker container to mount a different volume or change the host port: `docker rm lichess`
