@@ -1,7 +1,6 @@
 FROM ubuntu:16.04
 
 RUN useradd -ms /bin/bash lichess \
-    && echo "lichess ALL = NOPASSWD : ALL" >> /etc/sudoers \
     && apt-get update \
     && apt-get install -y apt-transport-https \
     # Add the MongoDB source.
@@ -25,11 +24,13 @@ RUN useradd -ms /bin/bash lichess \
         sbt \
         sudo \
         wget \
+    # Disable sudo login.
+    && echo "lichess ALL = NOPASSWD : ALL" >> /etc/sudoers \
     # Set locale.
     && locale-gen en_US.UTF-8 \
     # Silence the parallel citation warning.
-    && mkdir -p /root/.parallel \
-    && touch /root/.parallel/will-cite \
+    && mkdir -p /home/lichess/.parallel \
+    && touch /home/lichess/.parallel/will-cite \
     # Update node.
     && npm install -g n \
     && n stable \
