@@ -15,7 +15,7 @@ fi
 # Update the client side modules.
 ./ui/build
 
-yarn install && ./bin/svg-optimize
+yarn install
 
 # Compile the Scala application
 ./bin/dev compile
