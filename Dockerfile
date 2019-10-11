@@ -1,12 +1,14 @@
 FROM ubuntu:16.04
 
+ADD server-4.2.asc /root/server-4.2.asc
+
 RUN useradd -ms /bin/bash lichess \
     && apt-get update \
     && apt-get install -y apt-transport-https \
     # Add the MongoDB source.
-    && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927 \
-    && echo "deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" \
-        | tee /etc/apt/sources.list.d/mongodb-org-3.2.list \
+    && apt-key add /root/server-4.2.asc \
+    && rm /root/server-4.2.asc \
+    && echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.2 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.2.list \
     # Add the Scala Build Tool source.
     && echo "deb https://dl.bintray.com/sbt/debian /" \
         | tee -a /etc/apt/sources.list.d/sbt.list \
