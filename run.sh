@@ -21,4 +21,4 @@ yarn install
 ./bin/dev compile
 
 # Run the Scala application
-./bin/dev
+./bin/dev run

@@ -1,60 +1,66 @@
 FROM ubuntu:bionic-20190912.1
 
-ADD build /root/build
-
 RUN useradd -ms /bin/bash lichess \
     && apt-get update \
+    && apt-get install sudo \
+    # Disable sudo login for the new lichess user.
+    && echo "lichess ALL = NOPASSWD : ALL" >> /etc/sudoers
+
+# Run as a non-privileged user.
+USER lichess
+
+ENV PATH="/home/lichess/.cargo/bin:/home/lichess/.node/bin:/home/lichess/.yarn/bin:${PATH}"
+
+ADD build /home/lichess/build
+
+RUN echo 'debconf debconf/frontend select Noninteractive' | sudo debconf-set-selections \
     # Add custom sources for MongoDB and Scala.
-    && apt-get install -y ca-certificates gnupg2 \
-    && apt-key add /root/build/signatures/mongodb-org.asc \
-    && apt-key add /root/build/signatures/sbt.asc \
-    && rm -rf /root/build/signatures \
+    && sudo apt-get install -y ca-certificates gnupg2 \
+    && sudo apt-key add /home/lichess/build/signatures/mongodb-org.asc \
+    && sudo apt-key add /home/lichess/build/signatures/sbt.asc \
     && echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" \
-        | tee /etc/apt/sources.list.d/mongodb-org-4.2.list \
+        | sudo tee /etc/apt/sources.list.d/mongodb-org-4.2.list \
     && echo "deb https://dl.bintray.com/sbt/debian /" | \
-        tee -a /etc/apt/sources.list.d/sbt.list \
-    && apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+        sudo tee -a /etc/apt/sources.list.d/sbt.list \
+    && sudo apt-get update \
+    && sudo apt-get install -y \
+        default-jdk \
         git-all \
         locales \
         mongodb-org \
         nginx \
         npm \
-        openjdk-8-jre-headless \
         parallel \
         sbt \
-        sudo \
+        scala \
         wget \
-    # Disable sudo login.
-    && echo "lichess ALL = NOPASSWD : ALL" >> /etc/sudoers \
     # Set locale.
-    && locale-gen en_US.UTF-8 \
+    && sudo locale-gen en_US.UTF-8 \
     # Silence the parallel citation warning.
     && mkdir -p /home/lichess/.parallel \
     && touch /home/lichess/.parallel/will-cite \
     # Update node.
-    && npm install -g n \
-    && n stable \
+    && echo 'prefix = /home/lichess/.node' >> /home/lichess/.npmrc \
     && npm install -g yarn \
-    && yarn global add gulp-cli \
+    && yarn global add gulp-cli --prefix /home/lichess/.yarn \
     # Install svgcleaner via the Rust package manager, Cargo.
-    && /root/build/rustup-init.sh -y \
-    && /root/.cargo/bin/cargo install svgcleaner \
+    && /home/lichess/build/rustup-init.sh -y \
+    && cargo install svgcleaner \
     # Move the svgcleaner executable to a folder in the system's path.
-    && mv /root/.cargo/bin/svgcleaner /usr/bin/svgcleaner \
+    && sudo mv /home/lichess/.cargo/bin/svgcleaner /usr/bin/svgcleaner \
     # Create the MongoDB database directory.
-    && mkdir /data \
-    && mkdir /data/db \
-    && sbt update \
+    && sudo mkdir /data \
+    && sudo mkdir /data/db \
+    && JAVA_OPTS="-Xms2048M -Xmx2560M -XX:ReservedCodeCacheSize=128m -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC -XX:+ExitOnOutOfMemoryError -Dkamon.auto-start=true" sbt update \
     # Remove now unneeded dependencies.
-    && apt-get purge -y \
+    && sudo apt-get purge -y \
         git-all \
         gnupg2 \
         npm \
-    && apt-get autoremove -y \
-    && apt-get clean \
-    && /root/.cargo/bin/rustup self uninstall -y \
-    && rm -rf /root/build
+    && sudo apt-get autoremove -y \
+    && sudo apt-get clean \
+    && rustup self uninstall -y \
+    && rm -rf /home/lichess/build
 
 ADD run.sh /home/lichess/run.sh
 ADD nginx.conf /etc/nginx/nginx.conf
@@ -62,9 +68,6 @@ ADD nginx.conf /etc/nginx/nginx.conf
 # Use UTF-8 encoding.
 ENV LANG "en_US.UTF-8"
 ENV LC_CTYPE "en_US.UTF-8"
-
-# Run as a non-privileged user.
-USER lichess
 
 EXPOSE 80
 
