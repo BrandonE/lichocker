@@ -33,6 +33,7 @@ RUN export PATH="/home/lichess/.cargo/bin:/home/lichess/.node/bin:/home/lichess/
         parallel \
         sbt \
         wget \
+        redis-server \
     # Set locale.
     && sudo locale-gen en_US.UTF-8 \
     # Silence the parallel citation warning.
