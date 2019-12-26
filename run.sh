@@ -17,8 +17,5 @@ fi
 
 yarn install
 
-# Compile the Scala application
-./bin/dev compile
-
 # Run the Scala application
-./bin/dev run
+./lila run

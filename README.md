@@ -7,8 +7,6 @@
 * *Recommended*: Increase your Docker runtime memory to 4GB and your CPUs to 4 ([Mac](https://docs.docker.com/docker-for-mac/#advanced), [Windows](https://docs.docker.com/docker-for-windows/#advanced), and configure the `docker-machine` assigned memory and CPUs for VirtualBox).
 * Check out lichocker and open the directory in your terminal: `cd /YOUR/PATH/TO/lichocker`
 * Check out [lila](https://github.com/ornicar/lila), the main project behind Lichess: `git clone --recursive https://github.com/ornicar/lila.git`
-* Use the default dev console script: `cp lila/bin/dev.default lila/bin/dev && chmod +x lila/bin/dev`
-* Use the default application configuration: `cp lila/conf/application.conf.default lila/conf/application.conf`
 * Add the following line to your `/etc/hosts` file: `127.0.0.1 lichess-assets.local`
 
 ## Obtaining the Docker image
@@ -40,8 +38,6 @@ docker run \
     --tty \
     brandone211/lichess
 ```
-
-* Enter `run` when you see the [Scala Build Tool](https://www.scala-sbt.org/) console appear: `[lila] $`
 
 * Wait until you see the following message:
 
