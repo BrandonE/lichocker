@@ -7,6 +7,7 @@
 * *Recommended*: Increase your Docker runtime memory to 4GB and your CPUs to 4 ([Mac](https://docs.docker.com/docker-for-mac/#advanced), [Windows](https://docs.docker.com/docker-for-windows/#advanced), and configure the `docker-machine` assigned memory and CPUs for VirtualBox).
 * Check out lichocker and open the directory in your terminal: `cd /YOUR/PATH/TO/lichocker`
 * Check out [lila](https://github.com/ornicar/lila), the main project behind Lichess: `git clone --recursive https://github.com/ornicar/lila.git`
+* Check out [lila-ws](https://github.com/ornicar/lila-ws), which manages Websockets. `git clone https://github.com/ornicar/lila-ws.git`
 * Add the following line to your `/etc/hosts` file: `127.0.0.1 lichess-assets.local`
 
 ## Obtaining the Docker image
@@ -31,8 +32,10 @@ The Docker Hub repository can be found [here](https://hub.docker.com/r/brandone2
 ```
 docker run \
     --volume /YOUR/ABSOLUTE/PATH/TO/lila:/home/lichess/projects/lila \
+    --volume /YOUR/ABSOLUTE/PATH/TO/lila-ws:/home/lichess/projects/lila-ws \
     --publish 80:80 \
     --publish 9663:9663 \
+    --publish 9664:9664 \
     --name lichess \
     --interactive \
     --tty \
@@ -50,8 +53,6 @@ docker run \
 ```
 
 * Navigate to http://localhost:9663 in your host machine's browser.
-
-* Enter `evicted` in the `sbt` console and re-run if you see the following error: `[error]     version 2.11.12, library jar: /home/lichess/.ivy2/cache/org.scala-lang/scala-library/jars/scala-library-2.11.12.jar, compiler jar: /home/lichess/.ivy2/cache/org.scala-lang/scala-compiler/jars/scala-compiler-2.11.12.jar`
 
 ### Optional: Setup fishnet for server side analysis and play
 
