@@ -9,35 +9,48 @@ RUN useradd -ms /bin/bash lichess \
     # Disable sudo login for the new lichess user.
     && echo "lichess ALL = NOPASSWD : ALL" >> /etc/sudoers
 
+ENV TZ=Etc/GMT
+RUN sudo ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && sudo echo $TZ > /etc/timezone
+
 # Run as a non-privileged user.
 USER lichess
 
 ADD build /home/lichess/build
 
 RUN export HOME=/home/lichess \
-  && sudo apt-get install -y curl && sudo apt-get install -y gnupg2 && sudo apt-get install -y ca-certificates wget \
-  && curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89B84B2DF73499E82A75642AC823" | sudo apt-key add \
-  && curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash - \
-  && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - \
+  && sudo /home/lichess/build/node-init.sh \
+  && sudo apt-key add /home/lichess/build/signatures/yarn.asc \
   && echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list \
-  && wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc | sudo apt-key add - \
+  && sudo apt-key add /home/lichess/build/signatures/mongodb-org.asc \
   && echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.2.list \
   && sudo apt-get update && sudo apt update \
-  && sudo apt-get install -y unzip && sudo apt-get install -y zip && sudo apt-get install -y nodejs && sudo apt-get install -y mongodb-org && sudo apt-get install -y parallel && sudo apt install -y yarn && sudo apt install -y redis-server && sudo apt install -y git-all \
-  && curl -s "https://get.sdkman.io" | bash \
+  && sudo apt-get install -y \
+  unzip \
+  zip \
+  nodejs \ 
+  mongodb-org \ 
+  parallel \ 
+  && sudo apt install -y \ 
+  yarn \
+  redis-server \
+  git-all \
+  && /home/lichess/build/sdkman-init.sh \
   && source "$HOME/.sdkman/bin/sdkman-init.sh" \
   && sdk install java 13.0.1.hs-adpt && sdk install sbt \
   && sudo yarn global add gulp-cli \
+  # Silence the parallel citation warning.
   && sudo mkdir -p ~/.parallel && sudo touch ~/.parallel/will-cite \
-  && sudo mkdir -p /data/db && sudo chmod 777 /data/db
+  # Make directories for mongodb
+  && sudo mkdir -p /data/db && sudo chmod 666 /data/db \
+  && sudo apt-get autoremove -y \
+  && sudo apt-get clean \
+  && sudo rm -rf /home/lichess/build
 
 ADD run.sh /home/lichess/run.sh
 
 # Use UTF-8 encoding.
 ENV LANG "en_US.UTF-8"
 ENV LC_CTYPE "en_US.UTF-8"
-
-EXPOSE 80
 
 WORKDIR /home/lichess
 
