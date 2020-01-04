@@ -1,73 +1,56 @@
-FROM ubuntu:16.04
+FROM ubuntu:bionic-20191202
+
+SHELL ["/bin/bash", "-c"]
 
 RUN useradd -ms /bin/bash lichess \
     && apt-get update \
-    && apt-get install -y apt-transport-https \
-    # Add the MongoDB source.
-    && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927 \
-    && echo "deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" \
-        | tee /etc/apt/sources.list.d/mongodb-org-3.2.list \
-    # Add the Scala Build Tool source.
-    && echo "deb https://dl.bintray.com/sbt/debian /" \
-        | tee -a /etc/apt/sources.list.d/sbt.list \
-    && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823 \
-    && apt-get update \
-    && apt-get install -y \
-        curl \
-        default-jdk \
-        git-all \
-        locales \
-        mongodb-org \
-        nginx \
-        npm \
-        parallel \
-        sbt \
-        sudo \
-        wget \
-    # Disable sudo login.
-    && echo "lichess ALL = NOPASSWD : ALL" >> /etc/sudoers \
-    # Set locale.
-    && locale-gen en_US.UTF-8 \
-    # Silence the parallel citation warning.
-    && mkdir -p /home/lichess/.parallel \
-    && touch /home/lichess/.parallel/will-cite \
-    # Update node.
-    && npm install -g n \
-    && n stable \
-    # Link the nodejs executable so it can be used about Yarn.
-    && ln -s /usr/bin/nodejs /usr/bin/node \
-    && npm install -g yarn \
-    && yarn global add gulp-cli \
-    # Install svgcleaner via the Rust package manager, Cargo.
-    && curl https://sh.rustup.rs \
-        | sh -s -- -y \
-    && /root/.cargo/bin/cargo install svgcleaner \
-    # Move the svgcleaner executable to a folder in the system's path.
-    && mv /root/.cargo/bin/svgcleaner /usr/bin/svgcleaner \
-    # Create the MongoDB database directory.
-    && mkdir /data \
-    && mkdir /data/db \
-    && sbt update \
-    # Remove now unneeded dependencies.
-    && apt-get purge -y \
-        curl \
-        git-all \
-        npm \
-    && apt-get autoremove -y \
-    && apt-get clean \
-    && /root/.cargo/bin/rustup self uninstall -y
+    && apt update \
+    && apt-get install sudo \
+    # Disable sudo login for the new lichess user.
+    && echo "lichess ALL = NOPASSWD : ALL" >> /etc/sudoers
 
-ADD run.sh /home/lichess/run.sh
-ADD nginx.conf /etc/nginx/nginx.conf
-
-# Use UTF-8 encoding.
-ENV LANG "en_US.UTF-8"
-ENV LC_CTYPE "en_US.UTF-8"
+ENV TZ=Etc/GMT
+RUN sudo ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && sudo echo $TZ > /etc/timezone
 
 # Run as a non-privileged user.
 USER lichess
 
-EXPOSE 80
+ADD build /home/lichess/build
+
+RUN export HOME=/home/lichess \
+  && sudo /home/lichess/build/node-init.sh \
+  && sudo apt-key add /home/lichess/build/signatures/yarn.asc \
+  && echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list \
+  && sudo apt-key add /home/lichess/build/signatures/mongodb-org.asc \
+  && echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.2.list \
+  && sudo apt-get update && sudo apt update \
+  && sudo apt-get install -y \
+  unzip \
+  zip \
+  nodejs \ 
+  mongodb-org \ 
+  parallel \ 
+  && sudo apt install -y \ 
+  yarn \
+  redis-server \
+  git-all \
+  && /home/lichess/build/sdkman-init.sh \
+  && source "$HOME/.sdkman/bin/sdkman-init.sh" \
+  && sdk install java 13.0.1.hs-adpt && sdk install sbt \
+  && sudo yarn global add gulp-cli \
+  # Silence the parallel citation warning.
+  && sudo mkdir -p ~/.parallel && sudo touch ~/.parallel/will-cite \
+  # Make directories for mongodb
+  && sudo mkdir -p /data/db && sudo chmod 666 /data/db \
+  && sudo apt-get autoremove -y \
+  && sudo apt-get clean \
+  && sudo rm -rf /home/lichess/build
+
+ADD run.sh /home/lichess/run.sh
+
+# Use UTF-8 encoding.
+ENV LANG "en_US.UTF-8"
+ENV LC_CTYPE "en_US.UTF-8"
 
 WORKDIR /home/lichess
 
