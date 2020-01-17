@@ -6,8 +6,8 @@
 * [Install Docker](https://docs.docker.com/install/]).
 * *Recommended*: Increase your Docker runtime memory to 4GB and your CPUs to 4 ([Mac](https://docs.docker.com/docker-for-mac/#advanced), [Windows](https://docs.docker.com/docker-for-windows/#advanced), and configure the `docker-machine` assigned memory and CPUs for VirtualBox).
 * Check out lichocker and open the directory in your terminal: `cd /YOUR/PATH/TO/lichocker`
-* Check out [lila](https://github.com/ornicar/lila), the main project behind Lichess: `git clone --recursive https://github.com/ornicar/lila.git`
-* Check out [lila-ws](https://github.com/ornicar/lila-ws), which manages Websockets. `git clone https://github.com/ornicar/lila-ws.git`
+* Check out [lila](https://github.com/ornicar/lila), the main project behind Lichess, and grant permissions to the directory: `git clone --recursive https://github.com/ornicar/lila.git && chmod -R 777 lila`
+* Check out [lila-ws](https://github.com/ornicar/lila-ws), which manages Websockets, and grant permissions to the directory. `git clone https://github.com/ornicar/lila-ws.git && chmod -R 777 lila-ws`
 * Add the following line to your `/etc/hosts` file: `127.0.0.1 lichess-assets.local`
 
 ## Obtaining the Docker image
