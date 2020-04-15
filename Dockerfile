@@ -37,7 +37,7 @@ RUN export HOME=/home/lichess \
   git-all \
   && /home/lichess/build/sdkman-init.sh \
   && source "$HOME/.sdkman/bin/sdkman-init.sh" \
-  && sdk install java 13.0.1.hs-adpt && sdk install sbt \
+  && sdk install java 13.0.2.hs-adpt && sdk install sbt \
   && sudo yarn global add gulp-cli \
   # Silence the parallel citation warning.
   && sudo mkdir -p ~/.parallel && sudo touch ~/.parallel/will-cite \
