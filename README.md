@@ -33,8 +33,8 @@ The Docker Hub repository can be found [here](https://hub.docker.com/r/brandone2
 
 ```
 docker run \
-    --volume /YOUR/ABSOLUTE/PATH/TO/lila:/home/lichess/projects/lila \
-    --volume /YOUR/ABSOLUTE/PATH/TO/lila-ws:/home/lichess/projects/lila-ws \
+    --mount type=bind,source=/YOUR/ABSOLUTE/PATH/TO/lila,target=/home/lichess/projects/lila \
+    --mount type=bind,source=/YOUR/ABSOLUTE/PATH/TO/lila-ws,target=/home/lichess/projects/lila-ws \
     --publish 9663:9663 \
     --publish 9664:9664 \
     --name lichess \
