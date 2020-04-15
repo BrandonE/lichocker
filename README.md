@@ -46,9 +46,9 @@ docker run \
 ```
 --- (Running the application, auto-reloading is enabled) ---
 
-[info] p.c.s.NettyServer - Listening for HTTP on /0.0.0.0:9663
+[info] p.c.s.AkkaHttpServer - Listening for HTTP on /0.0.0.0:9663
 
-(Server started, use Ctrl+D to stop and go back to the console...)
+(Server started, use Enter to stop and go back to the console...)
 ```
 
 * Navigate to http://localhost:9663 in your host machine's browser.
