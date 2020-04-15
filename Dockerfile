@@ -19,6 +19,7 @@ ADD build /home/lichess/build
 
 RUN export HOME=/home/lichess \
   && sudo /home/lichess/build/node-init.sh \
+  && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - \
   && sudo apt-key add /home/lichess/build/signatures/yarn.asc \
   && echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list \
   && sudo apt-key add /home/lichess/build/signatures/mongodb-org.asc \
