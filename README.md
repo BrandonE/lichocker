@@ -12,6 +12,8 @@
 
 ## Obtaining the Docker image
 
+To obtain the image you can build it yourself or retrieve it from docker hub
+
 ### Building the image
 
 Run the following while in the lichocker directory: `docker build --tag brandone211/lichess .`
