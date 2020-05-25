@@ -3,7 +3,7 @@
 ## Prerequisites
 
 * [Install Git](https://git-scm.com/downloads).
-* [Install Docker](https://docs.docker.com/install/]).
+* [Install Docker](https://docs.docker.com/install/).
 * *Recommended*: Increase your Docker runtime memory to 4GB and your CPUs to 4 ([Mac](https://docs.docker.com/docker-for-mac/#advanced), [Windows](https://docs.docker.com/docker-for-windows/#advanced), and configure the `docker-machine` assigned memory and CPUs for VirtualBox).
 * Check out lichocker and open the directory in your terminal: `cd /YOUR/PATH/TO/lichocker`
 * Check out [lila](https://github.com/ornicar/lila), the main project behind Lichess: `git clone --recursive https://github.com/ornicar/lila.git`
