@@ -5,12 +5,14 @@
 * [Install Git](https://git-scm.com/downloads).
 * [Install Docker](https://docs.docker.com/install/).
 * *Recommended*: Increase your Docker runtime memory to 4GB and your CPUs to 4 ([Mac](https://docs.docker.com/docker-for-mac/#advanced), [Windows](https://docs.docker.com/docker-for-windows/#advanced), and configure the `docker-machine` assigned memory and CPUs for VirtualBox).
-* Check out lichocker and open the directory in your terminal: `cd /YOUR/PATH/TO/lichocker`
+* Check out lichocker (`git clone https://github.com/BrandonE/lichocker`) and open the directory in your terminal: `cd /YOUR/PATH/TO/lichocker`
 * Check out [lila](https://github.com/ornicar/lila), the main project behind Lichess: `git clone --recursive https://github.com/ornicar/lila.git`
 * Check out [lila-ws](https://github.com/ornicar/lila-ws), which manages Websockets. `git clone https://github.com/ornicar/lila-ws.git`
 * Add the following line to your `/etc/hosts` file: `127.0.0.1 lichess-assets.local`
 
 ## Obtaining the Docker image
+
+To obtain the image you can build it yourself or retrieve it from docker hub
 
 ### Building the image
 
@@ -31,8 +33,8 @@ The Docker Hub repository can be found [here](https://hub.docker.com/r/brandone2
 
 ```
 docker run \
-    --volume /YOUR/ABSOLUTE/PATH/TO/lila:/home/lichess/projects/lila \
-    --volume /YOUR/ABSOLUTE/PATH/TO/lila-ws:/home/lichess/projects/lila-ws \
+    --mount type=bind,source=/YOUR/ABSOLUTE/PATH/TO/lila,target=/home/lichess/projects/lila \
+    --mount type=bind,source=/YOUR/ABSOLUTE/PATH/TO/lila-ws,target=/home/lichess/projects/lila-ws \
     --publish 9663:9663 \
     --publish 9664:9664 \
     --name lichess \
@@ -46,9 +48,9 @@ docker run \
 ```
 --- (Running the application, auto-reloading is enabled) ---
 
-[info] p.c.s.NettyServer - Listening for HTTP on /0.0.0.0:9663
+[info] p.c.s.AkkaHttpServer - Listening for HTTP on /0.0.0.0:9663
 
-(Server started, use Ctrl+D to stop and go back to the console...)
+(Server started, use Enter to stop and go back to the console...)
 ```
 
 * Navigate to http://localhost:9663 in your host machine's browser.
