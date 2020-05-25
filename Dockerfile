@@ -17,13 +17,20 @@ USER lichess
 
 ADD build /home/lichess/build
 
+#node
 RUN export HOME=/home/lichess \
-  && sudo /home/lichess/build/node-init.sh \
+  && sudo /home/lichess/build/node-init.sh
+
+#yarn
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - \
   && sudo apt-key add /home/lichess/build/signatures/yarn.asc \
-  && echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list \
-  && sudo apt-key add /home/lichess/build/signatures/mongodb-org.asc \
-  && echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.2.list \
-  && sudo apt-get update && sudo apt update \
+  && echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+
+#mongodb
+RUN sudo apt-key add /home/lichess/build/signatures/mongodb-org.asc \
+  && echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.2.list
+
+RUN sudo apt-get update && sudo apt update \
   && sudo apt-get install -y \
   unzip \
   zip \
@@ -33,11 +40,14 @@ RUN export HOME=/home/lichess \
   && sudo apt install -y \ 
   yarn \
   redis-server \
-  git-all \
-  && /home/lichess/build/sdkman-init.sh \
+  git-all
+
+#Java
+RUN /home/lichess/build/sdkman-init.sh \
   && source "$HOME/.sdkman/bin/sdkman-init.sh" \
-  && sdk install java 13.0.1.hs-adpt && sdk install sbt \
-  && sudo yarn global add gulp-cli \
+  && sdk install java 13.0.2.hs-adpt && sdk install sbt
+
+RUN sudo yarn global add gulp-cli \
   # Silence the parallel citation warning.
   && sudo mkdir -p ~/.parallel && sudo touch ~/.parallel/will-cite \
   # Make directories for mongodb
