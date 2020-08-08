@@ -1,67 +1,39 @@
-FROM ubuntu:bionic-20191202
+ARG OPENJDK_TAG=14.0.2-jdk-buster
+FROM openjdk:${OPENJDK_TAG}
 
-SHELL ["/bin/bash", "-c"]
+ARG SBT_VERSION=1.3.13
 
-RUN useradd -ms /bin/bash lichess \
-    && apt-get update \
-    && apt update \
-    && apt-get install sudo \
-    # Disable sudo login for the new lichess user.
-    && echo "lichess ALL = NOPASSWD : ALL" >> /etc/sudoers
+RUN if [ -z "$(command -v yum)" ] ; \
+    then \
+        curl -L -o sbt-$SBT_VERSION.deb https://dl.bintray.com/sbt/debian/sbt-$SBT_VERSION.deb && \
+        dpkg -i sbt-$SBT_VERSION.deb && \
+        rm sbt-$SBT_VERSION.deb && \
+        apt-get update && \
+        apt-get install sbt && \
+        sbt sbtVersion; \
+    else \
+        curl https://bintray.com/sbt/rpm/rpm | tee /etc/yum.repos.d/bintray-sbt-rpm.repo && \
+        yum update && \
+        yum install -y sbt-$SBT_VERSION && \
+        sbt sbtVersion; \
+    fi
 
-ENV TZ=Etc/GMT
-RUN sudo ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && sudo echo $TZ > /etc/timezone
+ARG YARN_VERSION=1.22.4
 
-# Run as a non-privileged user.
-USER lichess
+RUN apt-get update && apt-get install -y gnupg2 && \
+    apt-get install -y apt-transport-https ca-certificates && \
+    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
+    apt-get update && \
+    apt-get install -y yarn=${YARN_VERSION}-1 && \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ > /etc/timezone && \
+    yarn global add gulp
 
-ADD build /home/lichess/build
-
-#node
-RUN export HOME=/home/lichess \
-  && sudo /home/lichess/build/node-init.sh
-
-#yarn
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - \
-  && sudo apt-key add /home/lichess/build/signatures/yarn.asc \
-  && echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-
-#mongodb
-RUN sudo apt-key add /home/lichess/build/signatures/mongodb-org.asc \
-  && echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.2.list
-
-RUN sudo apt-get update && sudo apt update \
-  && sudo apt-get install -y \
-  unzip \
-  zip \
-  nodejs \ 
-  mongodb-org \ 
-  parallel \ 
-  && sudo apt install -y \ 
-  yarn \
-  redis-server \
-  git-all
-
-#Java
-RUN /home/lichess/build/sdkman-init.sh \
-  && source "$HOME/.sdkman/bin/sdkman-init.sh" \
-  && sdk install java 13.0.2.hs-adpt && sdk install sbt
-
-RUN sudo yarn global add gulp-cli \
-  # Silence the parallel citation warning.
-  && sudo mkdir -p ~/.parallel && sudo touch ~/.parallel/will-cite \
-  # Make directories for mongodb
-  && sudo mkdir -p /data/db && sudo chmod 666 /data/db \
-  && sudo apt-get autoremove -y \
-  && sudo apt-get clean \
-  && sudo rm -rf /home/lichess/build
-
-ADD run.sh /home/lichess/run.sh
-
-# Use UTF-8 encoding.
 ENV LANG "en_US.UTF-8"
 ENV LC_CTYPE "en_US.UTF-8"
+ENV TZ=Etc/GMT
 
 WORKDIR /home/lichess
 
-ENTRYPOINT ./run.sh
+ADD run.sh .

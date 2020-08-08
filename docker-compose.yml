@@ -1,0 +1,50 @@
+version: '3.7'
+services:
+  mongodb:
+    image: mongo:4.2.8
+    ports:
+      - 27017:27017
+
+  redis:
+    image: redis:6.0.5
+    ports:
+      - 6379:6379
+
+  lila:
+    build:
+      context: .
+    entrypoint: ["/home/lichess/run.sh"]
+    network_mode: host
+    working_dir: /home/lichess/lila
+    environment:
+      - LILA_LOCATION=/home/lichess/lila
+      - LILA_UI_LOCATION=/home/lichess/lila/ui
+      - SBT_OPTS=
+        -Dmongodb.uri=mongodb://mongodb:27017/lichess
+        -Dredis.uri=redis://localhost:6379
+    volumes:
+      - $LILA_REPOSITORY_DIR:/home/lichess/lila:delegated
+    ports:
+      - 9663:9663
+    depends_on:
+      - mongodb
+      - redis
+
+  lila-ws:
+    build:
+      context: .
+    working_dir: /lila-ws
+    entrypoint: ["sbt", "run"]
+    network_mode: host
+    environment:
+      - SBT_OPTS=
+        -Dmongodb.uri=mongodb://mongodb:27017/lichess
+        -Dredis.uri=redis://localhost:6379
+    volumes:
+      - $LILA_WS_REPOSITORY_DIR:/lila-ws:delegated
+    ports:
+      - 9664:9664
+    depends_on:
+      - mongodb
+      - redis
+      - lila

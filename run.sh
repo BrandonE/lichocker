@@ -1,21 +1,12 @@
-#!/bin/bash
-source /home/lichess/.zshrc
+#!/bin/bash -e
 
-# Run Redis in the background.
-redis-server --daemonize yes
+LILA_LOCATION=${LILA_LOCATION:-"../../lila"}
+LILA_UI_LOCATION=${LILA_UI_LOCATION:-"../../lila/ui"}
 
-cd /home/lichess/projects/lila-ws
+# Build the ui if necessary
+if [ ! -d "$LILA_UI_LOCATION/node_modules" ]
+then
+  "$LILA_UI_LOCATION"/build
+fi
 
-# Run lila-ws in the background.
-setsid nohup sbt run &
-
-# Run MongoDB in the background.
-sudo mongod --fork --logpath /var/log/mongod.log
-
-cd /home/lichess/projects/lila
-
-# Update the client side modules.
-./ui/build
-
-# Run the Scala application
-./lila run
+"$LILA_LOCATION"/lila run
