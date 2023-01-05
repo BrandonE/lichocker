@@ -1,3 +1,7 @@
+# Deprecation notice!
+
+Please check out [a newer attempt at using Docker for Lichess](https://github.com/benediktwerner/lichess-docker), or consult the [Lichess Developer Onboarding Wiki](https://github.com/lichess-org/lila/wiki/Lichess-Development-Onboarding).
+
 # lichocker - [lichess.org](https://lichess.org) run in a [Docker](https://www.docker.com/) container
 
 ## Prerequisites
