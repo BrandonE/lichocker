@@ -1,16 +1,20 @@
-ARG OPENJDK_TAG=14.0.2-jdk-buster
+ARG OPENJDK_TAG=18.0.2-jdk-buster
 FROM openjdk:${OPENJDK_TAG}
 
-ARG SBT_VERSION=1.3.13
+ARG SBT_VERSION=1.8.1
 
 RUN if [ -z "$(command -v yum)" ] ; \
     then \
-        curl -L -o sbt-$SBT_VERSION.deb https://dl.bintray.com/sbt/debian/sbt-$SBT_VERSION.deb && \
-        dpkg -i sbt-$SBT_VERSION.deb && \
-        rm sbt-$SBT_VERSION.deb && \
+        apt-get update && \
+        apt-get install sudo apt-transport-https curl gnupg -yqq && \
+        echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" | tee /etc/apt/sources.list.d/sbt.list && \
+        echo "deb https://repo.scala-sbt.org/scalasbt/debian /" | tee /etc/apt/sources.list.d/sbt_old.list && \
+        curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89B84B2DF73499E82A75642AC823" \
+        | sudo -H gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/scalasbt-release.gpg --import && \
+        chmod 644 /etc/apt/trusted.gpg.d/scalasbt-release.gpg && \
         apt-get update && \
         apt-get install sbt && \
-        sbt sbtVersion; \
+        sbt sbtVersion -Dsbt.rootdir=true; \
     else \
         curl https://bintray.com/sbt/rpm/rpm | tee /etc/yum.repos.d/bintray-sbt-rpm.repo && \
         yum update && \
